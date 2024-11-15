@@ -115,14 +115,12 @@ The **Order Management System** is a full-stack application with a **Golang** ba
 ## Features
 
 - **Admin Interface**:
-    - Manage and update orders.
     - View detailed order information.
-    - Change order statuses (e.g., completed, pending).
+    
 
 - **User Interface**:
     - Place new orders.
-    - Track order status.
-    - View order summary.
+
 
 ---
 
@@ -136,6 +134,4 @@ The **Order Management System** is a full-stack application with a **Golang** ba
 
 ---
 
-## License
 
-This project is licensed under the [MIT License](LICENSE).
