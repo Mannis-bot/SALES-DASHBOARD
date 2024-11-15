@@ -3,9 +3,8 @@
       <!-- Top links -->
       <div class="top-links">
         <ul>
-          <li><router-link to="/" active-class="active-link">Home</router-link></li>
-          <li><router-link to="/cart" active-class="active-link">Cart</router-link></li>
-          
+          <li><router-link to="/" active-class="active">Home</router-link></li>
+          <li><router-link to="/orders" active-class="active">Orders Management</router-link></li>
         </ul>
       </div>
   
@@ -20,7 +19,7 @@
   export default {
     methods: {
       logout() {
-        
+        // Logic for logging out (clear session, redirect, etc.)
         console.log('User logged out');
       }
     }
@@ -31,9 +30,9 @@
   .sidebar {
     display: flex;
     flex-direction: column;
-    height: 100vh;  
-    width: 250px;   
-      
+    height: 100vh;  /* Take full height of the viewport */
+    width: 250px;   /* Set the width of the sidebar */
+      /* Example sidebar background color */
     background-color: white;
     color: black;
     padding: 20px;
@@ -41,7 +40,7 @@
   }
   
   .top-links {
-    flex: 1;  
+    flex: 1;  /* This takes up the majority of the space */
   }
   
   .top-links ul {
@@ -62,8 +61,8 @@
   }
   
   .bottom-logout {
-    margin-top: auto;  
-    margin-bottom: 20px;  
+    margin-top: auto;  /* This pushes the logout button to the bottom */
+    margin-bottom: 20px;  /* Optional space from the bottom */
   }
   
   .bottom-logout button {
@@ -79,7 +78,7 @@
   .bottom-logout button:hover {
     background-color: #c0392b;
   }
-  .active-link {
+  .active {
   color: #72ba14 !important;
 }
   </style>

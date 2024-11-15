@@ -1,133 +1,139 @@
 <template>
-    <div class="min-h-screen bg-gray-50">
-      <!-- Top Bar -->
-      <div class="bg-green-600 text-white p-4 shadow-md">
-        <h1 class="text-xl font-semibold">Your Cart</h1>
+  <div class="min-h-screen bg-gray-50">
+    <div class="container mx-auto p-6">
+      <!-- Cart Items -->
+      <div v-if="cartItems.length > 0" class="bg-white p-6 shadow-lg rounded-lg mb-6">
+        <h2 class="text-lg font-semibold text-green-600">Your Cart</h2>
+        <ul class="space-y-4 mt-4">
+          <li v-for="(item, index) in cartItems" :key="index" class="flex justify-between">
+            <div>
+              <span class="text-gray-800">{{ item.name }}</span>
+              <div class="mt-2 flex items-center space-x-2">
+                <button @click="updateQuantity(item, -1)" class="btn">-</button>
+                <span>{{ item.quantity }}</span>
+                <button @click="updateQuantity(item, 1)" class="btn">+</button>
+              </div>
+            </div>
+            <span class="text-gray-600">{{ (item.price * item.quantity) | currency }} Ksh</span>
+          </li>
+        </ul>
+        
+        <!-- Subtotal and Tax -->
+        <div class="mt-4">
+          <div class="flex justify-between">
+            <span class="text-gray-700">Subtotal:</span>
+            <span class="text-gray-600">{{ subtotal | currency }} Ksh</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-700">Tax (10%):</span>
+            <span class="text-gray-600">{{ tax | currency }} Ksh</span>
+          </div>
+          <div class="flex justify-between font-semibold">
+            <span>Total:</span>
+            <span class="text-gray-600">{{ total | currency }} Ksh</span>
+          </div>
+        </div>
+
+        <!-- Comment Section -->
+        <div class="mt-4">
+          <textarea v-model="orderComment" placeholder="Add a comment (e.g., deliver by 24 hours)" class="w-full p-2 border border-gray-300 rounded"></textarea>
+        </div>
       </div>
-  
-      <!-- Cart Content -->
-      <div class="container mx-auto p-6">
-        <!-- Cart Items -->
-        <div class="bg-white p-4 shadow-lg rounded-lg mb-6">
-          <h2 class="text-lg font-semibold text-green-600">Items in your cart</h2>
-          <div v-if="cartItems.length > 0" class="mt-4">
-            <ul class="space-y-4">
-              <li v-for="(item, index) in cartItems" :key="index" class="flex items-center justify-between border-b py-2">
-                <span class="text-gray-800">{{ item.name }}</span>
-                <span class="text-gray-600">{{ item.price | currency }} Ksh</span>
-              </li>
-            </ul>
-          </div>
-          <div v-else class="text-center text-gray-600 mt-6">
-            Your cart is empty.
-          </div>
-        </div>
-  
-        <!-- Cart Summary -->
-        <div class="bg-white p-4 shadow-lg rounded-lg">
-          <h2 class="text-lg font-semibold text-green-600">Cart Summary</h2>
-          <div class="mt-4 flex justify-between">
-            <span class="text-gray-700">Subtotal</span>
-            <span class="text-gray-700">{{ subtotal | currency }} Ksh</span>
-          </div>
-          <div class="mt-2 flex justify-between">
-            <span class="text-gray-700">Discount</span>
-            <span class="text-gray-700">{{ discount }} %</span>
-          </div>
-          <div class="mt-4 flex justify-between text-xl font-semibold text-green-600">
-            <span>Total</span>
-            <span>{{ total | currency }} Ksh</span>
-          </div>
-  
-          <!-- Continue Shopping Button -->
-          <div class="mt-6 flex gap-4 justify-between">
-            <router-link to="/">
-              <button class="py-2 bg-gray-300 text-black rounded-lg hover:bg-gray-400 focus:outline-none">
-                Continue Shopping
-              </button>
-            </router-link>
-  
-            <!-- Checkout Button -->
-            <button
-              v-if="!isCheckoutReady"
-              class="py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none"
-              @click="proceedToCheckout"
-            >
-              Proceed to Checkout in {{ countdown }} seconds
-            </button>
-  
-            <!-- After countdown, the button text changes to "Go to Checkout Now" -->
-            <button
-              v-else
-              class="py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:outline-none"
-              @click="proceedToCheckout"
-            >
-              Go to Checkout Now
-            </button>
-          </div>
-        </div>
+      <div v-else class="text-center text-gray-600">Your cart is empty.</div>
+
+      <!-- Checkout Button -->
+      <div v-if="cartItems.length > 0" class="mt-4">
+        <button @click="checkout" class="btn-green">Place Order</button>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        cartItems: [
-          { name: "Sugar", price: 10 },
-          { name: "Maize Flour", price: 5 },
-          // Add more items as needed
-        ],
-        discount: 10, // Example discount
-        countdown: 5, // Initial countdown time (in seconds)
-        isCheckoutReady: false, // Flag to show "Go to Checkout Now" button
-      };
+  </div>
+</template>
+
+<script>
+import { useCartStore } from "@/stores/cartStore";
+import { useRouter } from "vue-router";
+
+export default {
+  data() {
+    return {
+      orderComment: '',
+    };
+  },
+  computed: {
+    cartItems() {
+      const cartStore = useCartStore();
+      return cartStore.cartItems;
     },
-    computed: {
-      subtotal() {
-        return this.cartItems.reduce((acc, item) => acc + item.price, 0);
-      },
-      total() {
-        return this.subtotal - (this.subtotal * this.discount) / 100;
-      },
+    subtotal() {
+      return this.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     },
-    methods: {
-      proceedToCheckout() {
-        // Proceed to checkout logic
-        this.$router.push("/checkout"); // Assuming you have a checkout route
-      },
+    tax() {
+      return this.subtotal * 0.10; // Assuming 10% tax
     },
-    mounted() {
-      // Start the countdown timer when the component is mounted
-      this.startCountdown();
+    total() {
+      return this.subtotal + this.tax;
+    }
+  },
+  methods: {
+    updateQuantity(item, change) {
+      const cartStore = useCartStore();
+      const newQuantity = item.quantity + change;
+      if (newQuantity > 0) {
+        cartStore.updateQuantity(item.id, newQuantity);
+      } else {
+        cartStore.removeFromCart(item.id);
+      }
     },
-    methods: {
-      startCountdown() {
-        const countdownInterval = setInterval(() => {
-          if (this.countdown > 1) {
-            this.countdown--;
-          } else {
-            this.isCheckoutReady = true;
-            clearInterval(countdownInterval);
-          }
-        }, 1000); // Decrease countdown every second
-      },
-      proceedToCheckout() {
-        // Handle the checkout logic
-        this.$router.push("/checkout");
-      },
+    async checkout() {
+      const username = "postgres"; 
+      const password = "Marykiki";   //My Password
+
+      
+      const encodedCredentials = btoa(`${username}:${password}`);
+
+      try {
+        const orderData = {
+          items: this.cartItems.map(item => ({
+            product_id: item.id,
+            quantity: item.quantity,
+          })),
+          user_name: "DemoUser", 
+          total_price: this.total,
+          tax: this.tax,
+          comment: this.orderComment
+        };
+        console.log("Order Data:", orderData);
+
+        const response = await fetch("http://localhost:8080/api/place-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${encodedCredentials}` 
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        if (response.ok) {
+          alert("Order placed successfully!");
+          const cartStore = useCartStore();
+          console.log()
+          cartStore.clearCart(); // Clear cart after successful checkout
+          this.$router.push("/"); // Redirect to home page
+        } else {
+          alert("Failed to place order.");
+        }
+      } catch (error) {
+        console.error("Checkout error:", error);
+      }
     },
-    filters: {
-      currency(value) {
-        if (!value) return '0';
-        return value.toFixed(2); // Ensure the value always has two decimal places
-      },
+  },
+  filters: {
+    currency(value) {
+      return value ? value.toFixed(2) : "0.00";
     },
-  };
-  </script>
-  
-  <style scoped>
-  /* You can customize this further, but Tailwind should be enough for most use cases */
-  </style>
-  
+  },
+};
+</script>
+
+
+

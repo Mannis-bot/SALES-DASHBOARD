@@ -1,27 +1,21 @@
 <template>
     <div class="top-bar">
-      <!-- Page Name (Dynamic) -->
-      <div class="page-name">
-        <h1>{{ pageTitle }}</h1>
-      </div>
-  
-      <!-- Search Bar -->
       <div class="search-bar">
         <input type="text" v-model="searchQuery" placeholder="Search products...">
       </div>
   
-      <!-- Cart -->
+     
       <div class="cart">
         <router-link to="/cart">
           <i class="cart-icon">🛒</i>
         </router-link>
       </div>
   
-      <!-- Profile -->
+      
       <div class="profile">
         <div class="profile-info">
-          <p class="user-name">John Doe</p> 
-          <p class="role">User</p> 
+          <p class="user-name">Lee Nul</p> 
+          <p class="role">Admin</p> 
         </div>
       </div>
     </div>
@@ -29,35 +23,9 @@
   
   <script>
   export default {
-    data() {
-      return {
-        pageTitle: '',  
-        searchQuery: '', 
-      };
-    },
-    created() {
-      
-      this.updatePageTitle(this.$route.name);
-    },
-    watch: {
-      
-      '$route'(to) {
-        this.updatePageTitle(to.name);
-      }
-    },
-    methods: {
-      
-      updatePageTitle(routeName) {
-        if (routeName === 'home') {
-          this.pageTitle = 'Home';
-        } else if (routeName === 'cart') {
-          this.pageTitle = 'Your Cart';
-        } else if (routeName === 'order-history') {
-          this.pageTitle = 'Order History';
-        } 
-      }
+    
     }
-  };
+  
   </script>
   
   <style scoped>
@@ -112,5 +80,4 @@
     color: #666;
   }
   </style>
-  
   

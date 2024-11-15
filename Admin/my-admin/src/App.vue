@@ -1,30 +1,67 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
+<!-- src/App.vue -->
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="app-layout">
+    <!-- Sidebar (Left navigation) -->
+    <Sidebar />
+
+    <!-- Main content area, includes Topbar and dynamic page content -->
+    <div class="main-content bg-[#ebf2f0]">
+      <!-- Topbar (Top navigation) -->
+      <Topbar />
+
+      <!-- Dynamic page content loaded here -->
+      <router-view />
+    </div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+<script>
+import Sidebar from './components/Sidebar.vue';
+import Topbar from './components/Topbar.vue';
+
+export default {
+  components: {
+    Sidebar,
+    Topbar,
+  },
+};
+</script>
+
+<style>
+
+.app-layout {
+  display: flex;          
+  height: 100vh;          
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+
+/* Sidebar setup */
+.sidebar {
+  width: 250px;           /* Adjust based on your design */
+  background-color: #333; /* Color for sidebar */
+  color: white;           /* Text color */
+  position: fixed;        /* Fix sidebar on the left */
+  top: 0;
+  left: 0;
+  bottom: 0;
+  padding-top: 20px;
+  z-index: 1;
 }
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+/* Main content area */
+.main-content {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically (Topbar + router-view) */
+  flex: 1;                /* Take up remaining space */
+  margin-left: 250px;     /* Offset for sidebar */
+  padding: 20px;          /* Padding for content */
+  overflow-y: auto;       /* Allow scrolling if content is tall */
+}
+
+/* Topbar layout */
+.topbar {
+  background-color: #444;
+  padding: 15px;
+  color: white;
 }
 </style>
+
