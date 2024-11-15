@@ -67,11 +67,8 @@ export default {
     subtotal() {
       return this.cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
     },
-    tax() {
-      return this.subtotal * 0.10; // Assuming 10% tax
-    },
     total() {
-      return this.subtotal + this.tax;
+      return this.subtotal 
     }
   },
   methods: {
